@@ -24,7 +24,7 @@ public class DenseLayer
     private int InputSize; // previous layer's size or CNN input size
     private int OutputSize;
     private int Size;
-    private double LearningRate;
+    private double LearningRate; // tWEAKUNG SIZE
     private activationFunction ActivationFunction;
     private double[][] weights; // weights [Node] [Input]
     private double[] biases;
@@ -51,13 +51,13 @@ public class DenseLayer
     public double[] ForwardPass(double[] inputs)
     {
         double[] neurons = new double[Size];
-        for (var neuron = 0; neuron < Size; neuron++) { // running through each neuron in our neurons
-            var Lneuron = neurons[neuron];
+        for (var neuron = 0; neuron < neurons.Length; neuron++) { // running through each neuron in our neurons
+            double Lneuron = biases[neuron]; // instead of adding the biases, we can directly set it as a default value
             for (var input = 0; input < inputs.Length; input++) { // running through each input for the inputs of our selected neuron
                 Lneuron += inputs[input] * weights[neuron][input];
             }
 
-            neurons[neuron] = Lneuron;
+            neurons[neuron] = ReLU(Lneuron);
         }
 
         return neurons;
