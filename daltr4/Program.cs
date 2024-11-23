@@ -3,15 +3,8 @@ using System.Security.Cryptography;
 using daltr4;
 
 Console.WriteLine("hello bro - Made by Caltr4 - https://github.com/Catsef/daltr4");
-double Tanh(double x)
-{
-    return 2/(1+Math.Pow(Math.E, -(2*x)))-1;
-}
 
-double BipolarSigmoid(double x)
-{
-    return (1-Math.Exp(-x))/(1+Math.Exp(-x));
-}
+
 
 public class DenseLayer
 {
@@ -20,13 +13,28 @@ public class DenseLayer
     {
         return Math.Max(0, x);
     }
+    double Tanh(double x)
+    {
+        return 2/(1+Math.Pow(Math.E, -(2*x)))-1;
+    }
+    double BipolarSigmoid(double x)
+    {
+        return (1-Math.Exp(-x))/(1+Math.Exp(-x));
+    }
+    double activate(double x)
+    {
+        if (ActivationFunction == activationFunction.ReLu) return ReLU(x);
+        if (ActivationFunction == activationFunction.Tanh) return Tanh(x);
+        if (ActivationFunction == activationFunction.Sigmoid) return BipolarSigmoid(x);
+        else return 0;
+    }
     
     private int InputSize; // previous layer's size or CNN input size
     private int OutputSize;
     private int Size;
     private double LearningRate; // tWEAKUNG SIZE
     private activationFunction ActivationFunction;
-    private double[][] weights; // weights [Node] [Input]
+    private double[][] weights; // weights [Input] [Neuron]
     private double[] biases;
 
     public void Initialize()
@@ -57,10 +65,27 @@ public class DenseLayer
                 Lneuron += inputs[input] * weights[neuron][input];
             }
 
-            neurons[neuron] = ReLU(Lneuron);
+            neurons[neuron] = activate(Lneuron);
         }
 
         return neurons;
+    }
+
+    public void BackwardPass(double[] ExpectedValues, double[] inputs)
+    {
+        double[][] DeltaWeights = new double[InputSize][];
+        double[] DeltaBiases = new double[Size];
+        double[] DeltaInputs = new double[InputSize];
+
+        double[] Neurons = new double[Size];
+        Neurons = ForwardPass(inputs);
+        
+        double[] errors = new double[Size];
+        for (var neuronIndex = 0; neuronIndex < Neurons.Length; neuronIndex++)
+        {
+            errors[neuronIndex] = ExpectedValues[neuronIndex] - Neurons[neuronIndex];
+            // delta Neuron = Error * derivative of activation function
+        }
     }
     
     
