@@ -1,4 +1,5 @@
 ﻿
+using System.Collections;
 using System.Security.Cryptography;
 using daltr4;
 
@@ -63,9 +64,6 @@ public class Activation
 
 public class DenseHiddenLayer
 {
-    
- 
-    
     private int InputSize; // previous layer's size
     private int OutputSize; // next layer's size
     private int Size;
@@ -108,9 +106,20 @@ public class DenseHiddenLayer
         return neurons;
     }
 
-    public void BackwardPass(double[] OutputExpectedValues, double[] inputs, double[] nextLayerDeltas, DenseHiddenLayer nextLayer)
+    public (double[][], double[], double[], double[]) 
+        BackwardPass(
+            double[] OutputExpectedValues, 
+            double[] inputs,
+            double[] nextLayerDeltas, 
+            DenseHiddenLayer nextLayer, 
+            DenseHiddenLayer prevLayer
+            )
     {
         double[][] DeltaWeights = new double[InputSize][];
+        for (int i = 0; i < InputSize; i++)
+        {
+            DeltaWeights[i] = new double[Size];
+        }
         double[] DeltaBiases = new double[Size];
         double[] DeltaInputs = new double[InputSize];
 
@@ -127,7 +136,7 @@ public class DenseHiddenLayer
             
             DeltaNeurons[neuronIndex] = Activation.derivactivate(Neurons[neuronIndex]) * SUM;
         }
-
+        
         for (var neuronIndex = 0; neuronIndex < Neurons.Length; neuronIndex++)
         {
             for (var input = 0; input < inputs.Length; input++)
@@ -137,9 +146,7 @@ public class DenseHiddenLayer
 
             DeltaBiases[neuronIndex] = LearningRate * DeltaNeurons[neuronIndex];
         }
-        
-        // return the nextLayerDeltas for the next layer before this one?
-        // return deltas?
+        return (DeltaWeights, DeltaBiases, DeltaInputs, DeltaNeurons);
     }
 
     public double[][] getLtoCWeights()
