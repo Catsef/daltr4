@@ -1,5 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-
+﻿
 using System.Security.Cryptography;
 using daltr4;
 
@@ -22,18 +21,16 @@ public class DenseLayer
         return Math.Max(0, x);
     }
     
-    private int InputSize;
+    private int InputSize; // previous layer's size or CNN input size
     private int OutputSize;
     private int Size;
     private double LearningRate;
     private activationFunction ActivationFunction;
-    private double[] neurons;
     private double[][] weights; // weights [Node] [Input]
     private double[] biases;
 
     public void Initialize()
     {
-        neurons = new double[Size]; // neurons - useless?
         
         weights = new double[InputSize][]; // inputsize, size; controls how each of the inputs affect the gen value
         for (var x = 0; x < InputSize; x++) {
@@ -43,29 +40,30 @@ public class DenseLayer
                 weights[x][i] = RandomNumberGenerator.GetInt32(-1, 1);
             }
         }
-        biases = new double[Size]; // basically C in Y=mX+C - its the intercept.
+        biases = new double[Size]; // its the intercept - offsets values. Neuron V = (Previous Layer : Sum : ReLU * weights) + bias.
 
         for (var i = 0; i < Size; i++)
         {
-            neurons[i] = RandomNumberGenerator.GetInt32(-1, 1);
             biases[i] = RandomNumberGenerator.GetInt32(-1, 1);
-            
         }
     }
     
-    public void ForwardPass(double[] inputs)
+    public double[] ForwardPass(double[] inputs)
     {
-        var index = 0;
-        foreach (var neuron in neurons) {
-            var Lneuron = neuron;
-            foreach (var input in inputs) {
-                Lneuron += input;
+        double[] neurons = new double[Size];
+        for (var neuron = 0; neuron < Size; neuron++) { // running through each neuron in our neurons
+            var Lneuron = neurons[neuron];
+            for (var input = 0; input < inputs.Length; input++) { // running through each input for the inputs of our selected neuron
+                Lneuron += inputs[input] * weights[neuron][input];
             }
 
-            neurons[index] = Lneuron;
-            index++;
+            neurons[neuron] = Lneuron;
         }
+
+        return neurons;
     }
+    
+    
     
     DenseLayer (int inputSize, int outputSize, int layerSize, double learningRate, activationFunction activationFunction)
     {
