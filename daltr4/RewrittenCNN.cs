@@ -119,6 +119,8 @@ class DenseLayer
     // TODO: Initialize function?
     // TODO: Update Bias function?
     
+    // TODO: Remove all manual for loops and replace with MathNET Numerics Matrix
+    
     public double[] ForwardPass(double[]? lastLayerNeurons)
     {
         if ((isDenseLayer || isOutputLayer) && lastLayerNeurons == null) 
