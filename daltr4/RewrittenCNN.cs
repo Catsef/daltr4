@@ -116,6 +116,8 @@ class DenseLayer
         return true;
     }
     
+    // TODO: Initialize function?
+    // TODO: Update Bias function?
     
     public double[] ForwardPass(double[]? lastLayerNeurons)
     {
@@ -224,7 +226,7 @@ class DenseLayer
 
     public void updateWeights(double[][] weights, double[] Grad)
     {
-        
+        // TODO: Finish
     }
 
     public DenseLayer(bool input, bool output, bool dense, int neurons, activationFunction function, double? learningRate, double[]? inputs)
